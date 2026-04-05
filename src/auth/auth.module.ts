@@ -8,11 +8,12 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     UserModule,
+    //load .env
     ConfigModule.forRoot(),
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '3h' },
     }),
   ],
   controllers: [AuthController],
