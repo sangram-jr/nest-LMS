@@ -25,7 +25,8 @@ export class AuthService {
         //console.log('user:',user);
 
         //generate jwt token 
-        const payload={ sub: user._id};
+        //todo: remove role admin from here . only for test
+        const payload={ sub: user._id,role: user.role};
         const token=await this.jwtService.signAsync(payload);
         return {access_token:token};    
     }
@@ -41,7 +42,8 @@ export class AuthService {
         }
 
         //generate jwt token 
-        const payload={ sub: user._id};
+        
+        const payload={ sub: user._id,role: user.role};
         const token=await this.jwtService.signAsync(payload);
         return {access_token:token}; 
        
