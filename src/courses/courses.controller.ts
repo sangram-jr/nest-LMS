@@ -14,27 +14,36 @@ export class CoursesController {
   @Post()
   @UseGuards(AuthGuard,RolesGuard)//protecting route(only authorized user access this endpoint)-> same as middleware and also i add RoleGuead for admin or student role
   @Roles(Role.admin)//only admin create courses
-  create(@Body() createCourseDto: CreateCourseDto) {
-    return this.coursesService.create(createCourseDto);
+  async create(@Body() createCourseDto: CreateCourseDto) {
+    const course=await this.coursesService.create(createCourseDto);
+    return {
+      message: 'Course created successfully',
+      data: course,
+    };
   }
 
   @Get()
-  findAll() {
-    return this.coursesService.findAll();
+  async findAll() {
+    return await this.coursesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.coursesService.findOne(+id);
+  @UseGuards(AuthGuard)
+  async findOne(@Param('id') id: string) {
+    return await this.coursesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.coursesService.update(+id, updateCourseDto);
+  @UseGuards(AuthGuard,RolesGuard)//protecting route(only authorized user access this endpoint)-> same as middleware and also i add RoleGuead for admin or student role
+  @Roles(Role.admin)//only admin create courses
+  async update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
+    return await this.coursesService.update(id, updateCourseDto);  
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.coursesService.remove(+id);
+  @UseGuards(AuthGuard,RolesGuard)//protecting route(only authorized user access this endpoint)-> same as middleware and also i add RoleGuead for admin or student role
+  @Roles(Role.admin)//only admin create courses
+  async remove(@Param('id') id: string) {
+    return await this.coursesService.remove(id);
   }
 }

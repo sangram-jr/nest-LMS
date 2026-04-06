@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,23 +16,41 @@ export class CoursesService {
       description:createCourseDto.description,
       level:createCourseDto.level,
       price:createCourseDto.price
-    })
-    
+    }); 
   }
 
-  findAll() {
-    return `This action returns all courses`;
+  async findAll() {
+    return await this.courseModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
+  async findOne(id: string) {
+    return this.courseModel.findOne({_id:id});
   }
 
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
+    const updatedCourse = await this.courseModel.findByIdAndUpdate(
+      id,
+      updateCourseDto,
+      { returnDocument: 'after' } //returns updated document
+    );
+
+    if (!updatedCourse) {
+      throw new NotFoundException('Course not found');
+    }
+    return {
+      message: 'Course updated successfully',
+      data: updatedCourse,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+  async remove(id: string) {
+    const deletedCourse=await this.courseModel.findByIdAndDelete(id);
+    if (!deletedCourse) {
+      throw new NotFoundException('Course not found');
+    }
+    return {
+      message: 'Course deleted successfully',
+      data: deletedCourse,
+    };
   }
 }
